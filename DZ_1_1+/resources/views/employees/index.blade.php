@@ -2,8 +2,8 @@
 
 @section('content')
 <div class="container mt-4">
-    <h2>Employees</h2>
-    <a href="{{ route('employees.create') }}" class="btn btn-primary mb-3">Add New Employee</a>
+    <h2>Product Photos</h2>
+    <a href="{{ route('productphoto.create') }}" class="btn btn-primary mb-3">Add New Product Photo</a>
 
     @if (session('success'))
         <div class="alert alert-success">
@@ -15,23 +15,31 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Login ID</th>
-                <th>Title</th>
-                <th>Hire Date</th>
+                <th>Product ID</th>
+                <th>Photo</th>
+                <th>Primary</th>
+                <th>Modified Date</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($employees as $employee)
+            @foreach ($productphotos as $photo)
                 <tr>
-                    <td>{{ $employee->EmployeeID }}</td>
-                    <td>{{ $employee->LoginID }}</td>
-                    <td>{{ $employee->Title }}</td>
-                    <td>{{ $employee->HireDate }}</td>
+                    <td>{{ $photo->ProductPhotoID }}</td>
+                    <td>{{ $photo->ProductID }}</td>
                     <td>
-                        <a href="{{ route('employees.show', $employee) }}" class="btn btn-sm btn-info">View</a>
-                        <a href="{{ route('employees.edit', $employee) }}" class="btn btn-sm btn-warning">Edit</a>
-                        <form action="{{ route('employees.destroy', $employee) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this employee?');">
+                        @if($photo->LargePhoto)
+                            <img src="{{ asset('storage/photos/' . $photo->LargePhoto) }}" alt="Photo" style="width: 100px;">
+                        @else
+                            No Photo
+                        @endif
+                    </td>
+                    <td>{{ $photo->Primary ? 'Yes' : 'No' }}</td>
+                    <td>{{ $photo->ModifiedDate }}</td>
+                    <td>
+                        <a href="{{ route('productphoto.show', ['productphoto' => $photo->ProductPhotoID]) }}" class="btn btn-sm btn-info">View</a>
+                        <a href="{{ route('productphoto.edit', ['productphoto' => $photo->ProductPhotoID]) }}" class="btn btn-sm btn-warning">Edit</a>
+                        <form action="{{ route('productphoto.destroy', ['productphoto' => $photo->ProductPhotoID]) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this photo?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-sm btn-danger">Delete</button>
@@ -42,7 +50,6 @@
         </tbody>
     </table>
 
-    {{-- Custom Pagination: This calls your custom pagination view (vendor/pagination/custom.blade.php) --}}
-    {{ $employees->links('vendor.pagination.custom') }}
+    {{ $productphotos->links('vendor.pagination.custom') }}
 </div>
 @endsection
