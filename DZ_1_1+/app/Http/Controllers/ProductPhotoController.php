@@ -71,4 +71,13 @@ class ProductPhotoController extends Controller
                 ->header('Content-Type', 'image/gif'); // ili image/jpeg ili image/png ako je potrebno
     }
 
+    public function prikazi($id){
+        $productphoto = \App\Models\ProductPhoto::findOrFail($id);
+        $data = $productphoto->toArray();
+        unset($data['LargePhoto']);
+        unset($data['ThumbNailPhoto']);
+    
+        return response()->json($data);
+    }
+
 }

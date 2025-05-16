@@ -15,4 +15,5 @@ Route::resource('products', ProductController::class);
 Route::resource('locations', LocationController::class);
 Route::resource('productphoto', ProductPhotoController::class);
 Route::get('/productphoto/image/{id}', [App\Http\Controllers\ProductPhotoController::class, 'image'])->name('productphoto.image');
+Route::get('/prikazi/{id}', [App\Http\Controllers\ProductPhotoController::class, 'prikazi'])->name('productphoto.prikazi');
 
