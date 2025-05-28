@@ -6,7 +6,16 @@ const apiClient = axios.create({
         Accept: "application/json",
         "Content-Type": "application/json",
     },
-    withCredentials: true,
+    withCredentials: false, // Sanctum token ne koristi cookies nego Bearer token
+});
+
+// Dodaj Authorization header ako postoji token u localStorage
+apiClient.interceptors.request.use((config) => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
 });
 
 const api = {

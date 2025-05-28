@@ -33,12 +33,6 @@ class EmployeeController extends Controller
      */
 public function index()
 {
-    if (!Auth::check()) {
-        return response()->json([
-            'message' => 'Niste prijavljeni. Pristup zahtijeva autentifikaciju.'
-        ], 401);
-    }
-
     $employees = Employee::paginate(10)->toArray();
     return response()->json($employees, 200, [], JSON_INVALID_UTF8_IGNORE);
 }

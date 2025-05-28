@@ -17,19 +17,19 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="emp in employees" :key="emp.EmployeeID">
-                    <td>{{ emp.EmployeeID }}</td>
+                <tr v-for="emp in employees" :key="emp.id">
+                    <td>{{ emp.id }}</td>
                     <td>{{ emp.NationalIDNumber }}</td>
                     <td>{{ emp.Title }}</td>
                     <td>
                         <router-link
-                            :to="`/employees/${emp.EmployeeID}/edit`"
+                            :to="`/employees/${emp.id}/edit`"
                             class="btn-edit"
                             >✏️ Edit</router-link
                         >
                         <button
                             class="btn-delete"
-                            @click="deleteEmployee(emp.EmployeeID)"
+                            @click="deleteEmployee(emp.id)"
                         >
                             🗑️ Delete
                         </button>
@@ -75,25 +75,56 @@ export default {
         };
     },
     mounted() {
+        // 1. Ako postoji token u URL-u, spremi ga u localStorage
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get("token");
+        if (token) {
+            localStorage.setItem("authToken", token);
+            // Makni token iz URL-a
+            const url = new URL(window.location.href);
+            url.searchParams.delete("token");
+            window.history.replaceState({}, document.title, url.toString());
+        }
+
+        // 2. Dohvati zaposlenike
         this.fetchEmployees();
     },
     methods: {
         fetchEmployees(page = 1) {
-            api.employees.getAll({ page }).then((res) => {
-                this.employees = res.data.data;
-                this.pagination = {
-                    current_page: res.data.current_page,
-                    last_page: res.data.last_page,
-                    total: res.data.total,
-                    per_page: res.data.per_page,
-                };
-            });
+            api.employees
+                .getAll({ page })
+                .then((res) => {
+                    this.employees = res.data.data;
+                    this.pagination = {
+                        current_page: res.data.current_page,
+                        last_page: res.data.last_page,
+                        total: res.data.total,
+                        per_page: res.data.per_page,
+                    };
+                })
+                .catch((err) => {
+                    if (err.response && err.response.status === 401) {
+                        alert("Niste autorizirani. Molimo prijavite se.");
+                        this.$router.push("/login");
+                    } else {
+                        console.error(
+                            "Greška pri dohvaćanju zaposlenika:",
+                            err
+                        );
+                    }
+                });
         },
         deleteEmployee(id) {
             if (confirm("Are you sure you want to delete this employee?")) {
-                api.employees.delete(id).then(() => {
-                    this.fetchEmployees(this.pagination.current_page);
-                });
+                api.employees
+                    .delete(id)
+                    .then(() => {
+                        this.fetchEmployees(this.pagination.current_page);
+                    })
+                    .catch((err) => {
+                        console.error("Greška kod brisanja:", err);
+                        alert("Brisanje nije uspjelo.");
+                    });
             }
         },
     },
