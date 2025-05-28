@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Employee;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class EmployeeController extends Controller
 {
@@ -30,11 +31,17 @@ class EmployeeController extends Controller
      *   ...
      * }
      */
-    public function index()
-    {
-        $employees = Employee::paginate(10)->toArray();
-        return response()->json($employees, 200, [], JSON_INVALID_UTF8_IGNORE);
+public function index()
+{
+    if (!Auth::check()) {
+        return response()->json([
+            'message' => 'Niste prijavljeni. Pristup zahtijeva autentifikaciju.'
+        ], 401);
     }
+
+    $employees = Employee::paginate(10)->toArray();
+    return response()->json($employees, 200, [], JSON_INVALID_UTF8_IGNORE);
+}
 
     /**
      * @group Employees

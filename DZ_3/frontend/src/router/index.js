@@ -5,6 +5,8 @@ import ProductList from "../views/ProductList.vue";
 import ProductForm from "../views/ProductForm.vue";
 import LocationList from "../views/LocationList.vue";
 import LocationForm from "../views/LocationForm.vue";
+import LoginPage from "../views/LoginPage.vue";
+import RegisterPage from "../views/RegisterPage.vue";
 
 const routes = [
     { path: "/", redirect: "/employees" },
@@ -17,6 +19,14 @@ const routes = [
     { path: "/locations", component: LocationList },
     { path: "/locations/new", component: LocationForm },
     { path: "/locations/:id/edit", component: LocationForm, props: true },
+    {
+        path: "/login",
+        component: LoginPage,
+    },
+    {
+        path: "/register",
+        component: RegisterPage,
+    },
 ];
 
 const router = createRouter({
